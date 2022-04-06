@@ -140,7 +140,7 @@ namespace ECommerceLiteUI.Controllers
             }
         }
 
-
+        
         [HttpGet]
         public async Task<ActionResult> Activation(string code)
         {
@@ -195,6 +195,14 @@ namespace ECommerceLiteUI.Controllers
                    
                 }
 
+                //NOT:Müsait olduğunuzda bir beyin fırtınası yapabilirsiniz.
+                //Kendinize şu soruyu sorun! PassiveUser null gelirse nasıl bir yol izlenilebilir.??
+                //PassiveUser null gelmesi çok büyük bir problem mi?
+                //Customerda bu kişi kayıtlı mı? Customerda bir problem yok.CUstomer kayıtlı değilse PROBLEM VAR!
+                //Buraya yazılması gereken mini mimmacık kodları şmdilik size bırakma gibi yapıyorum sonra birlikte tekrar bakacağız
+
+
+                return View();
             }
             catch (Exception ex)
             {
