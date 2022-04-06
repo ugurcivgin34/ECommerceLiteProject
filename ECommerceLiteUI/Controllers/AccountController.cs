@@ -140,7 +140,7 @@ namespace ECommerceLiteUI.Controllers
             }
         }
 
-        
+
         [HttpGet]
         public async Task<ActionResult> Activation(string code)
         {
@@ -170,7 +170,7 @@ namespace ECommerceLiteUI.Controllers
 
                 PassiveUser passiveUser = myPassiveUserRepo
                     .AsQueryable().FirstOrDefault(x => x.UserId == user.Id);
-                if (passiveUser !=null)
+                if (passiveUser != null)
                 {
                     //TODO: PassiveUser tablosuna TargetRole ekleme işlemini daha sonra yapalım.Kafalarındaki soru işareti gittikten sonra...
                     passiveUser.IsDeleted = true;
@@ -192,7 +192,7 @@ namespace ECommerceLiteUI.Controllers
 
                     ViewBag.ActivationResult = $"Merhaba Sayın {user.Name} {user.Surname},aktileştirme işleminiz başarılıdır! Giriş yapıp sistemi kullanabilirsiniz";
                     return View();
-                   
+
                 }
 
                 //NOT:Müsait olduğunuzda bir beyin fırtınası yapabilirsiniz.
@@ -212,6 +212,81 @@ namespace ECommerceLiteUI.Controllers
 
             }
 
+        }
+
+        [HttpGet]
+        [Authorize] //Kişinin login olması şart.Şart olmasını getirmek istiyorsak bu anatosyonu kulanmamız gerek.Yetkili olacak mı bu sayfaya girecek olan kişi
+        public ActionResult UserProfile()
+        {
+            //login olmuş kişinin id bilgisini alalım
+            var user = myUserManager.FindById(HttpContext.User.Identity.GetUserId());//İçeriye giren kişinin bilgilerini tutuyor.Session 
+            if (user != null)
+            {
+                //kişiyi bulacağız ve mevcutr bilgilerini ProfileVİewModele atayıp sayfaya göndereceğiz.
+
+                ProfileViewModel model = new ProfileViewModel()
+                {
+                    Name = user.Name,
+                    Surname = user.Surname,
+                    Email = user.Email,
+                    TCNumber = user.UserName
+                };
+                return View(model);
+            }
+            //User null ise( temkinli davrandık...)
+            ModelState.AddModelError("", "Beklenmedik bir sorun oluşmuş olabilir mi? Giriş yapıp,tekrar deneyiniz. Sizinle tekrar buluşalım!");
+            return View();
+
+
+        }
+
+        [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> UserProfile(ProfileViewModel model)
+        {
+            try
+            {
+                //Sisteme kayıt olmuş ve login ile giriş yapmış kişi Hesabıma tıkladı,bilgilerini gördü.Bilgilerinde değişiklik yaptı.
+                //Biz burada kontrol edeceğiz.Yapılan değişiklikleri tespit edip DB'mizi güncelleyeceğiz.
+                var user = myUserManager.FindById(HttpContext.User.Identity.GetUserId());
+                if (user == null)
+                {
+                    ModelState.AddModelError("", "Mevcut kullanıcı bilgilerinize ulaşılamadığı için işlem yapamıyoruz");
+                    return View(model);
+                }
+
+                //Bir user herhangi bir bilgisini değiştirecekse PAROLASINI girmek zorunda
+                //Bu nedenle model ile gelen parola DB'deki parola ile eşleşiyor mu diye bakmak lazım...
+                if (myUserManager.PasswordHasher.VerifyHashedPassword(user.PasswordHash, model.Password) == PasswordVerificationResult.Failed)
+                {
+                    ModelState.AddModelError("", "Mevcut şirenizi yanlış girdiğiniz için bilgilerinizi güncellemeyedik! Lütfen tekrar deneyinz");
+                    return View(model);
+                }
+                //Başarılıysa yani parolayı doğru yazdı!
+                //Bilgilerini güncelleyeceğiz
+
+                user.Name = model.Name;
+                user.Surname = model.Surname;
+                await myUserManager.UpdateAsync(user);
+                ViewBag.Result = "Bilgileriniz güncellendi";
+                var updateModel = new ProfileViewModel()
+                {
+                    Name = user.Name,
+                    Surname = user.Surname,
+                    TCNumber = user.UserName,
+                    Email = user.Email
+                };
+                return View(updateModel);
+
+            }
+            catch (Exception ex)
+            {
+
+                //ex loglanacak
+                ModelState.AddModelError("", "Beklenmedik hata oluştur! Tekrar deneyeiniz");
+                return View(model);
+            }
         }
 
 
