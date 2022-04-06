@@ -36,9 +36,14 @@ namespace ECommerceLiteUI.Controllers
             //KAyıt ol sayfası
             return View();
         }
-
+        /// <summary>
+        /// Kullanıcı kayıt işlemini gerçekleştiren metod.
+        /// </summary>
+        /// <param name="model">Oluşturduğumuz model classının propertlerini kullandık</param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken] //Güvenliği sağlama kamacıyla bot hesaplardan bu metoda erişlemzsin diye kullandık
+
         public async Task<ActionResult> Register(RegisterViewModel model)
         {
             try
@@ -62,6 +67,8 @@ namespace ECommerceLiteUI.Controllers
                     ModelState.AddModelError("", "Bu email ile daha önceden sisteme kayıt yapılmıştır!");
                     return View(model);
                 }
+                //aktivasyon kodu üretelim
+                var activationCode = Guid.NewGuid().ToString().Replace("-", "");
 
                 //Artık sisteme kayıt olabilir...
                 var newUser = new ApplicationUser()
@@ -69,11 +76,11 @@ namespace ECommerceLiteUI.Controllers
                     Name = model.Name,
                     Surname = model.Surname,
                     Email = model.Email,
-                    UserName = model.TCNumber
+                    UserName = model.TCNumber,
+                    ActivationCode = activationCode
                 };
 
-                //aktivasyon kodu üretelim
-                var activationCode = Guid.NewGuid().ToString().Replace("-", "");
+
 
                 //Artık ekleyelim
                 var createResult = myUserManager.CreateAsync(newUser, model.Password);
@@ -126,10 +133,80 @@ namespace ECommerceLiteUI.Controllers
             }
             catch (Exception ex)
             {
-                //yarın yazalım
+                //To Do:Loglama yapılacak
+                ModelState.AddModelError("", "Beklenmedik bir hata oluştur! Tekrar deneyiniz");
+                return View(model);
 
             }
         }
+
+
+        [HttpGet]
+        public async Task<ActionResult> Activation(string code)
+        {
+            try
+            {
+                //select * from AspNetUsers where Activationcode='şlasdknawdşasdnwak'
+                var user =
+                    myUserStore.Context.Set<ApplicationUser>()
+                    .FirstOrDefault(x => x.ActivationCode == code);
+
+                if (user == null)
+                {
+                    ViewBag.ActivationResult = "Aktivasyon işlemi başarısız! Sistem yöneticisinden yeniden email isteyiniz..";
+                    return View();
+                }
+                //user bulundu
+
+                if (user.EmailConfirmed) //zaten aktifleşmiş mi?
+                {
+                    ViewBag.ActivationResult = "Aktivasyon işleminiz zaten gerçekleşmiştir! Giriş yaparak sistemi kullanabilirsiniz...";
+                    return View();
+                }
+                user.EmailConfirmed = true;
+                await myUserStore.UpdateAsync(user);
+                await myUserStore.Context.SaveChangesAsync();
+                //Bu kişi artık aktif!
+
+                PassiveUser passiveUser = myPassiveUserRepo
+                    .AsQueryable().FirstOrDefault(x => x.UserId == user.Id);
+                if (passiveUser !=null)
+                {
+                    //TODO: PassiveUser tablosuna TargetRole ekleme işlemini daha sonra yapalım.Kafalarındaki soru işareti gittikten sonra...
+                    passiveUser.IsDeleted = true;
+                    myPassiveUserRepo.Update();
+                    Customer customer = new Customer()
+                    {
+                        UserId = user.Id,
+                        TCNumber = passiveUser.TCNumber,
+                        IsDeleted = false,
+                        LastActiveTime = DateTime.Now
+                    };
+
+                    await myCustomerRepo.InsertAsync(customer); //Asenkron mekanizmayı hazırla
+
+                    //Aspnetuserrole tablosuna bu kişinin artık customer mertebesine uaştığını bildirelim.
+                    myUserManager.RemoveFromRole(user.Id, Roles.Passive.ToString()); //id sini verdiğimiz passive rolü sil
+                    myUserManager.AddToRole(user.Id, Roles.Customer.ToString());
+                    //işlem bitti başarılı olduğuna dair mesajı gönderelim
+
+                    ViewBag.ActivationResult = $"Merhaba Sayın {user.Name} {user.Surname},aktileştirme işleminiz başarılıdır! Giriş yapıp sistemi kullanabilirsiniz";
+                    return View();
+                   
+                }
+
+            }
+            catch (Exception ex)
+            {
+                //ToDo: Loglama yapılacak
+                ModelState.AddModelError("", "Beklenmedik bir hata oluştur!");
+                return View();
+
+            }
+
+        }
+
+
 
     }
 }
