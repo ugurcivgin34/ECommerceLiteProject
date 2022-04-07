@@ -344,7 +344,7 @@ namespace ECommerceLiteUI.Controllers
                     return View(model);
                 }
                 //Artık şifresini değiştirebilir.
-                await myUserStore.SetPasswordHashAsync(user,myUserManager.PasswordHasher.HashPassword(model.NewPassword));
+                await myUserStore.SetPasswordHashAsync(user, myUserManager.PasswordHasher.HashPassword(model.NewPassword));
 
                 await myUserManager.UpdateAsync(user);
                 //Şifre değiştirdikten sonra sistemden atalım!
@@ -379,7 +379,7 @@ namespace ECommerceLiteUI.Controllers
 
                 //2.yöntem
                 var user = myUserManager.FindByEmail(model.Email);
-                if (user==null)
+                if (user == null)
                 {
                     ViewBag.RecorverPassword = "Sistemde kayıtlı böyle bir kullanıcı olmadığı için size yeni şifre gönderemiyoruz! Lütfen önce kayıt olun";
                     return View(model);
@@ -426,7 +426,7 @@ namespace ECommerceLiteUI.Controllers
                     ReturnUrl = returnUrl,
                     Email = email
                 };
-            return View(model);
+                return View(model);
             }
             catch (Exception ex)
             {
@@ -443,65 +443,64 @@ namespace ECommerceLiteUI.Controllers
             {
                 if (!ModelState.IsValid)
                 {
-                    var user = await myUserManager.FindAsync(model.Email, model.Password);
-                    if (user == null)
-                    {
-                        ModelState.AddModelError("", "Emailinizi ya da şifrenizi yanlış girdiniz!");
-                        return View(model);
-                    }
-                    //User'ı buldu ama rolü pasif ise sisteme giremesin!
-                    if (user.Roles.FirstOrDefault().RoleId==
-                        myRoleManager.FindByName(Enum.GetName(typeof(Roles),Roles.Passive)).Id
-                            
-                        )
-                    {
-                        ViewBag.Result = "Sistemi kullanmak için aktivasyon yapmanız gerekmektedir.! Emailinize gönderilen aktivasyon linkine tıklayınız!";
-                        //TO DO:Zaman kalırsa Email Gönder butonu adında küçük bir buton burada olsun.
-                        return View();
-                    }
-                    //Artık login olabilir
-                    var authManager = HttpContext.GetOwinContext().Authentication;
-                    //userin kimlik bilgilerini cooki de tut.
-                    var userIdentity = await myUserManager.CreateIdentityAsync(user, DefaultAuthenticationTypes.ApplicationCookie);
-
-                    authManager.SignIn(new AuthenticationProperties()
-                    {
-                        IsPersistent = model.RememberMe
-                    },userIdentity);
-
-                    //Giriş yaptı! Peki nereye gidecek?
-                    //Herkes rolüne uygun default bir sayfaya gitsin
-                    if (user.Roles.FirstOrDefault().RoleId==
-                        myRoleManager.FindByName(
-                            Enum.GetName(typeof(Roles),Roles.Admin)).Id
-                        )
-                    {
-                        return RedirectToAction("Dashboard", "Admin");
-                    }
-                    
-                    if (user.Roles.FirstOrDefault().RoleId ==
-                        myRoleManager.FindByName(
-                            Enum.GetName(typeof(Roles), Roles.Customer)).Id
-                        )
-                    {
-                        return RedirectToAction("Index", "Home");
-                    }
-                    if (string.IsNullOrEmpty(model.ReturnUrl))
-                    {
-                        return RedirectToAction("Index", "Home");
-                    }
-                    //ReturnURL dolu ise???
-                    var url = model.ReturnUrl.Split('/'); //Split ettik
-                    if (url.Length==4)
-                    {
-                        return RedirectToAction(url[2], url[1], new { id = url[3] });
-                    }
-                    else
-                    {
-                        return RedirectToAction(url[2],url[1]);
-                        //return RedirectToAction("UserProfile","Account"); 
-                    }
+                    return View(model);
                 }
+
+                var user = await myUserManager.FindAsync(model.Email, model.Password);
+                if (user == null)
+                {
+                    ModelState.AddModelError("", "Emailinizi ya da şifrenizi yanlış girdiniz!");
+                    return View(model);
+                }
+                //User'ı buldu ama rolü pasif ise sisteme giremesin!
+                if (user.Roles.FirstOrDefault().RoleId == myRoleManager.FindByName(Enum.GetName(typeof(Roles), Roles.Passive)).Id)
+                {
+                    ViewBag.Result = "Sistemi kullanmak için aktivasyon yapmanız gerekmektedir.! Emailinize gönderilen aktivasyon linkine tıklayınız!";
+                    //TO DO:Zaman kalırsa Email Gönder butonu adında küçük bir buton burada olsun.
+                    return View(model);
+                }
+                //Artık login olabilir
+                var authManager = HttpContext.GetOwinContext().Authentication;
+                //userin kimlik bilgilerini cooki de tut.
+                var userIdentity = await myUserManager.CreateIdentityAsync(user, DefaultAuthenticationTypes.ApplicationCookie);
+
+                //2.Yol
+                //AuthenticaltionProperties ozellıkler = new AuthenticationProperties();
+                //ozellıkler.Ispersistent = model.RememberMe;
+                //authManager.SignIn(authProperties,userIdentity);
+                authManager.SignIn(new AuthenticationProperties()
+                {
+                    IsPersistent = model.RememberMe
+                }, userIdentity);
+
+                //Giriş yaptı! Peki nereye gidecek?
+                //Herkes rolüne uygun default bir sayfaya gitsin
+                if (user.Roles.FirstOrDefault().RoleId == myRoleManager.FindByName(Enum.GetName(typeof(Roles), Roles.Admin)).Id)
+                {
+                    return RedirectToAction("Dashboard", "Admin");
+                }
+
+                if (user.Roles.FirstOrDefault().RoleId == myRoleManager.FindByName(Enum.GetName(typeof(Roles), Roles.Customer)).Id)
+                {
+                    return RedirectToAction("Index", "Home");
+                }
+
+                if (string.IsNullOrEmpty(model.ReturnUrl))
+                {
+                    return RedirectToAction("Index", "Home");
+                }
+                //ReturnURL dolu ise???
+                var url = model.ReturnUrl.Split('/'); //Split ettik
+                if (url.Length == 4)
+                {
+                    return RedirectToAction(url[2], url[1], new { id = url[3] });
+                }
+                else
+                {
+                    return RedirectToAction(url[2], url[1]);
+                    //return RedirectToAction("UserProfile","Account"); 
+                }
+
             }
             catch (Exception ex)
             {
@@ -517,7 +516,7 @@ namespace ECommerceLiteUI.Controllers
             Session.Clear();
             var user = MembershipTools.GetUser();
             HttpContext.GetOwinContext().Authentication.SignOut();
-            return RedirectToAction("Login", "Account",new { email = user.Email});
+            return RedirectToAction("Login", "Account", new { email = user.Email });
         }
     }
 }

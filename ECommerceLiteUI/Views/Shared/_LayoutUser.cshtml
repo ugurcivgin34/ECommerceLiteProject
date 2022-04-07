@@ -53,7 +53,8 @@
                 <ul class="header-links pull-right">
 
                     <!--Buraya partial gelecek..-->
-                    @if (MembershipTools.GetUser() != null)@*Sistemde biri varsa çıkış yap yazısı, kimse yok giriş yap yazısı gelecek*@
+                    <!--Sistemde biri varsa çıkış yap yazısı, kimse yok giriş yap yazısı gelecek-->
+                    @if (MembershipTools.GetUser() != null)
                     {
                         <li><a href="/Account/Logout"><i class="fa fa-sign-out"></i> ÇIKIŞ YAP</a></li>
                     }
