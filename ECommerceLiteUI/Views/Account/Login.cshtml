@@ -8,12 +8,13 @@
 <div class="row margin-vert-30">
     <!--Login Start-->
     <div class="col-md-6 col-md-offset-3 col-md-offset-3">
-        @Html.ValidationSummary()
+
 
         @using (Html.BeginForm("Login", "Account", FormMethod.Post, new { @class = "form-horizontal" }))
         {
             @Html.AntiForgeryToken()
 
+            @Html.ValidationSummary()
             <div class="login-header margin-bottom-30" align="center">
                 <h2 class="text-center">ECommerceLite 303'e HOŞGELDİNİZ!</h2>
 
