@@ -44,7 +44,6 @@ namespace ECommerceLiteUI.Controllers
         /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken] //Güvenliği sağlama kamacıyla bot hesaplardan bu metoda erişlemzsin diye kullandık
-
         public async Task<ActionResult> Register(RegisterViewModel model)
         {
             try
