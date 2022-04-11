@@ -14,6 +14,8 @@
             <h4 class="text-center text-danger">@ViewBag.Result</h4>
         }
 
+
+
         @using (Html.BeginForm("Login", "Account", FormMethod.Post, new { @class = "form-horizontal" }))
         {
             @Html.AntiForgeryToken()
@@ -24,7 +26,10 @@
             @Html.ValidationSummary()
             <div class="login-header margin-bottom-30" align="center">
                 <h2 class="text-center">ECommerceLite 303'e HOŞGELDİNİZ!</h2>
-
+                @if (TempData["PasswordUpdated"] != null)
+                {
+                    <h4 class="text-center text-success">@TempData["PasswordUpdated"]</h4>
+                }
             </div>
             <br />
             <div class="input-group margin-bottom-20">
@@ -44,9 +49,10 @@
                 </span>
                 @Html.TextBoxFor(x => x.Password, new
            {
-               
+
                @class = "form-control",
-               placeholder = "Şifrenizi giriniz...",type="password" 
+               placeholder = "Şifrenizi giriniz...",
+                    type = "password"
            })
 
                 <!--Controller da yaptığımız isvalid kısmında hata alırsa uymazsa yani buraya gelir-->
@@ -82,4 +88,3 @@
 
 </div>
 
-    
