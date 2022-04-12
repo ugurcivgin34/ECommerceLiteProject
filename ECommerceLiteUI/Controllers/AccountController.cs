@@ -419,6 +419,13 @@ namespace ECommerceLiteUI.Controllers
         {
             try
             {
+                //zaten giriş yapmış biri bu sayfayı tekrar çağırdığında Home-Indexe gitsin
+
+                if (MembershipTools.GetUser()!=null)
+                {
+                    //To Do:Acaba kişinin gittiği URL'i tutup oraya geri gönderme nasıl yaparız ?
+                    return RedirectToAction("Index", "Home");
+                }
                 //To DO:Sayfa patlamazsa if kontrolüne gerek yok! Test ederken bakacağız
                 var model = new LoginViewModel()
                 {
