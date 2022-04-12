@@ -166,6 +166,7 @@
     </Compile>
     <Compile Include="Models\LoginViewModel.cs" />
     <Compile Include="Models\PasswordChangeViewModel.cs" />
+    <Compile Include="Models\ProductViewModel.cs" />
     <Compile Include="Models\ProfileViewModel.cs" />
     <Compile Include="Models\RegisterViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -239,6 +240,7 @@
     <Content Include="AdminLTE\dist\img\user6-128x128.jpg" />
     <Content Include="AdminLTE\dist\img\user7-128x128.jpg" />
     <Content Include="AdminLTE\dist\img\user8-128x128.jpg" />
+    <Content Include="AdminLTE\dist\img\öküz.jpeg" />
     <Content Include="AdminLTE\dist\js\adminlte.js" />
     <Content Include="AdminLTE\dist\js\adminlte.min.js" />
     <Content Include="AdminLTE\dist\js\demo.js" />
@@ -2353,6 +2355,7 @@
     <Content Include="Views\Account\UserProfile.cshtml" />
     <Content Include="Views\Shared\_LayoutAdmin.cshtml" />
     <Content Include="Views\Product\ProductList.cshtml" />
+    <Content Include="Views\Product\Create.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
