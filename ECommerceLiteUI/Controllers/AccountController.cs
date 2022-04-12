@@ -35,6 +35,14 @@ namespace ECommerceLiteUI.Controllers
         public ActionResult Register()
         {
             //KAyıt ol sayfası
+
+            //zaten giriş yapmış biri bu sayfayı tekrar çağırdığında Home-Indexe gitsin
+
+            if (MembershipTools.GetUser() != null)
+            {
+                //To Do:Acaba kişinin gittiği URL'i tutup oraya geri gönderme nasıl yaparız ?
+                return RedirectToAction("Index", "Home");
+            }
             return View();
         }
         /// <summary>
@@ -229,7 +237,7 @@ namespace ECommerceLiteUI.Controllers
                     Name = user.Name,
                     Surname = user.Surname,
                     Email = user.Email,
-                    TCNumber = user.UserName
+
                 };
                 return View(model);
             }
@@ -274,7 +282,7 @@ namespace ECommerceLiteUI.Controllers
                 {
                     Name = user.Name,
                     Surname = user.Surname,
-                    TCNumber = user.UserName,
+
                     Email = user.Email
                 };
                 return View(updateModel);
@@ -293,26 +301,16 @@ namespace ECommerceLiteUI.Controllers
         [Authorize]
         public ActionResult UpdatePassword()
         {
-            var user = myUserManager.FindById(HttpContext.User.Identity.GetUserId());
-            if (user != null)
-            {
-                ProfileViewModel model = new ProfileViewModel()
-                {
-                    Email = user.Email,
-                    Name = user.Name,
-                    Surname = user.Surname,
-                    TCNumber = user.UserName
-                };
-                return View(model);
-            }
-            ModelState.AddModelError("", "Sistem giriş yapmanız gerekmektedir");
+            
             return View();
         }
+       
+        
 
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> UpdatePassword(ProfileViewModel model)
+        public async Task<ActionResult> UpdatePassword(PasswordChangeViewModel model)
         {
             try
             {//Mevcuttan login olmuş kişinin ID'sini veriyor.O id ile manager kişiyi db'den bulup getiriyor.
@@ -324,7 +322,7 @@ namespace ECommerceLiteUI.Controllers
                     //Bu kişi mevcut şifresinin aynısını yeni şifre olarak yutturmaya çalışıyor
                     ModelState.AddModelError("", "Yeni şifreniz mevcut şifrenizle aynı olmasın madem değiştirmek istedin!!");
                     return View(model);
-                }
+                } 
 
                 //Yeni şifre ile şifre tekrarı uyuşuyor mu?
                 if (model.NewPassword != model.ConfirmPassword)
@@ -421,7 +419,7 @@ namespace ECommerceLiteUI.Controllers
             {
                 //zaten giriş yapmış biri bu sayfayı tekrar çağırdığında Home-Indexe gitsin
 
-                if (MembershipTools.GetUser()!=null)
+                if (MembershipTools.GetUser() != null)
                 {
                     //To Do:Acaba kişinin gittiği URL'i tutup oraya geri gönderme nasıl yaparız ?
                     return RedirectToAction("Index", "Home");
