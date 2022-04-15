@@ -20,10 +20,11 @@ namespace ECommerceLiteUI.Controllers
         CategoryRepo myCategoryRepo = new CategoryRepo();
         ProductRepo myProductRepo = new ProductRepo();
         ProductPictureRepo myProductPictureRepo = new ProductPictureRepo();
+        private const int pageSize = 5;
 
         //Bu controller a Admin gibi yetkili kişiler erişecektir
         //Burada ürünlerin listelenmesi, ekleme, silme, güncelleme işlemleri yapılacakır.
-        public ActionResult ProductList(string search = "")
+        public ActionResult ProductList(int? page=1,string search = "")
         {
             //Alt Kategorileri repo aracılığıyla db'den çektik
             ViewBag.SubCategories = myCategoryRepo.AsQueryable().Where(x => x.BaseCategoryId != null).ToList();
@@ -35,11 +36,28 @@ namespace ECommerceLiteUI.Controllers
             }
             else
             {
+               
+
                 allProducts = myProductRepo.GetAll()
                     .Where(x => x.ProductName.ToLower().Contains(search.ToLower()) || x.Description.ToLower().Contains(search.ToLower())).ToList();
             }
+            //Paging--> 1.yöntem bu yöntem en klasik yöntemdir.
+            allProducts = allProducts.Skip(
+                (page.Value < 1 ? 1 : page.Value - 1) 
+                * pageSize //10 taneyi geç 10 taneyi al
+                )
+                .Take(pageSize) // 10 take al neden 10? Çünkü yukarıdaki pageSize 10'a eşitlenmiş
+                .ToList();
+
+            //Sayfaya bazı bilgiler göndereceğiz
+            var totalProduct =myProductRepo.GetAll().Count; // toplam ürün sayısı
+            ViewBag.TotalProduct = totalProduct; // toplam ürün sayısını sayfaya göndereceğiz
+            ViewBag.TotalPages = (int)Math.Ceiling(totalProduct /(double)pageSize);// Toplamürün/sayfada gösterilecek üründen kaç sayfa olduğu bilgisi
+            ViewBag.PageSize = pageSize; // Her sayfada kaç ürün gözükecek bilgisini HTML sayfasına gönderelim
+            ViewBag.CurrentPage = page; // View'de kaçıncı sayfada olduğum bilgisini tutsun
 
             return View(allProducts);
+
             //return View(myProductRepo.GetAll());//üst satır gibi olur
         }
 
