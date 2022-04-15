@@ -7,13 +7,13 @@ namespace ECommerceLiteDAL.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.4.4")]
-    public sealed partial class mig_product : IMigrationMetadata
+    public sealed partial class add_product : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(mig_product));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(add_product));
         
         string IMigrationMetadata.Id
         {
-            get { return "202204141622402_mig_product"; }
+            get { return "202204150609499_add_product"; }
         }
         
         string IMigrationMetadata.Source

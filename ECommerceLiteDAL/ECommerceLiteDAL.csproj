@@ -82,9 +82,9 @@
     <Compile Include="Migrations\202204041145458_initialDB.designer.cs">
       <DependentUpon>202204041145458_initialDB.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202204141622402_mig_product.cs" />
-    <Compile Include="Migrations\202204141622402_mig_product.designer.cs">
-      <DependentUpon>202204141622402_mig_product.cs</DependentUpon>
+    <Compile Include="Migrations\202204150609499_add_product.cs" />
+    <Compile Include="Migrations\202204150609499_add_product.designer.cs">
+      <DependentUpon>202204150609499_add_product.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="MyContext.cs" />
@@ -104,8 +104,8 @@
     <EmbeddedResource Include="Migrations\202204041145458_initialDB.resx">
       <DependentUpon>202204041145458_initialDB.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202204141622402_mig_product.resx">
-      <DependentUpon>202204141622402_mig_product.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202204150609499_add_product.resx">
+      <DependentUpon>202204150609499_add_product.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

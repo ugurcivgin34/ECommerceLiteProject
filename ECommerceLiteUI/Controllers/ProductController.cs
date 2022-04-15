@@ -25,6 +25,8 @@ namespace ECommerceLiteUI.Controllers
         //Burada ürünlerin listelenmesi, ekleme, silme, güncelleme işlemleri yapılacakır.
         public ActionResult ProductList(string search = "")
         {
+            //Alt Kategorileri repo aracılığıyla db'den çektik
+            ViewBag.SubCategories = myCategoryRepo.AsQueryable().Where(x => x.BaseCategoryId != null).ToList();
             List<Product> allProducts = new List<Product>();//Boş bir liste ekliyorum 
             //var allProducts = myProductRepo.GetAll();
             if (string.IsNullOrEmpty(search))//eğer search in içi boi ise bütün productları getir
@@ -200,6 +202,86 @@ namespace ECommerceLiteUI.Controllers
                 ModelState.AddModelError("", "Beklenmedik bir hata oluştu");
                 //ex loglanacak
                 return View(model);
+            }
+        }
+        
+        public JsonResult GetProductDetails(int id) //mvc de sonu result ile biten geri dönüş tipleri vardır.
+        {
+            try
+            {
+                var product = myProductRepo.GetById(id);
+                if (product!=null)
+                {
+                    //var data = product.Adapt<ProductViewModel>();
+                    var data = new ProductViewModel()
+                    {
+                        Id = product.Id,
+                        ProductName = product.ProductName,
+                        Description = product.Description,
+                        ProductCode = product.ProductCode,
+                        CategoryId = product.CategoryId,
+                        Discount = product.Discount,
+                        Quantity = product.Quantity,
+                        RegisterDate = product.RegisterDate,
+                        Price = product.Price
+                        
+                    };
+                    return Json(new {isSuccess=true,data },JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    return Json(new { isSuccess = false });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                //ex loglansn
+                return Json(new { isSuccess=false});
+                
+            }
+        }
+
+        public ActionResult Edit(ProductViewModel model)
+        {
+            try
+            {
+                var product = myProductRepo.GetById(model.Id);
+                if (product!=null)
+                {
+                    product.ProductName = model.ProductName;
+                    product.Description = model.Description;
+                    product.Discount = model.Discount;
+                    product.Quantity = model.Quantity;
+                    product.ProductCode = model.ProductCode;
+                    product.Price = model.Price;
+                    product.CategoryId = model.CategoryId;
+
+                    int updateResult = myProductRepo.Update(); //DEğişimi görmek için int şeklinde gördük değeri
+                    if (updateResult>0)
+                    {
+                        TempData["EditSuccess"] = "Bilgiler başarıyla güncellenmiştir!";
+                        return RedirectToAction("ProductList", "Product");
+                    }
+                    else
+                    {
+                        TempData["EditFailed"] = "Beklenmedik bir hata olduğu için ürüne bilgileri sisteme aktarılmadı!";
+                        return RedirectToAction("ProductList", "Product");
+                    }
+                    //Viewbag ile category gittiği için eklemeye gerek duymadık
+                }
+                else
+                {
+                    TempData["EditFailed"] = "Ürün bulunamadığı için ürün bilgileri güncellenemedi!";
+                    return RedirectToAction("ProductList", "Product");
+                }
+            }
+            catch (Exception ex)
+            {
+
+                //ex loglanacak
+                TempData["EditFailed"] = "Beklenmedik bir hata nedeniyle ürün bilgileri güncellenemedi!";
+                return RedirectToAction("ProductList", "Product");
             }
         }
 
