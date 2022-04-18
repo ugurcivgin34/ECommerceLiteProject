@@ -80,6 +80,8 @@ namespace ECommerceLiteUI.Controllers
                 .Take(pageSize) // 10 take al neden 10? Çünkü yukarıdaki pageSize 10'a eşitlenmiş
                 .ToList();
 
+        
+            
 
             return View(allProducts);
 
@@ -127,7 +129,7 @@ namespace ECommerceLiteUI.Controllers
                 //    return View(model);
                 //}
 
-                if (model.CategoryId <= 0 || model.CategoryId > myCategoryRepo.GetAll().Count())
+                if (model.CategoryId <= 0)
                 {
                     ModelState.AddModelError("", "Ürüne ait kategori seçilmelidir!");
                     return View(model);
@@ -206,19 +208,19 @@ namespace ECommerceLiteUI.Controllers
                                     IsDeleted = false
 
                                 };
-                                pictureInsertResult = myProductPictureRepo.Insert(picture);
+                                pictureInsertResult += myProductPictureRepo.Insert(picture);
 
 
                             }
                         }
                         //pictureInsertResult kontrol edilecektir
-                        if (insertResult>0 && model.Files.Count==insertResult)
+                        if (pictureInsertResult > 0 && model.Files.Count== pictureInsertResult)
                         {
                             //Bütün resimler eklenmiş
                             TempData["ProductInsertSuccess"] = "Yeni ürün eklenmiştir";
                             return RedirectToAction("ProductList","Product");
                         }
-                        else if (insertResult>0 && model.Files.Count!=insertResult)
+                        else if (pictureInsertResult > 0 && model.Files.Count!= pictureInsertResult)
                         {
                             //Eksik eklemiş
                             TempData["ProductInsertWarning"] = "Yeni ürün eklendi ama resimlerden bazıları beklenmedik bir sorun yüzünden eklenemedi! Eklenilemeyen" +
