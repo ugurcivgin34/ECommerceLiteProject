@@ -31,6 +31,8 @@ namespace ECommerceLiteEntity.IdentityModels
         public DateTime RegisterDate { get; set; } = DateTime.Now;
         //ToDo:Guid'in kaç haneli olduğuna bakıp buraya string string length ile attribute tanımlanacaktır.
         public string ActivationCode { get; set; }
+        public bool IsDeleted { get; set; } = false;
+
 
 
         //İsteyen birthDate gibi bir alan ekleyebilir

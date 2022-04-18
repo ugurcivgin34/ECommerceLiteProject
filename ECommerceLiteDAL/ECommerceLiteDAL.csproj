@@ -86,6 +86,10 @@
     <Compile Include="Migrations\202204150609499_add_product.designer.cs">
       <DependentUpon>202204150609499_add_product.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202204180740427_ProductPictureTbUpdatd.cs" />
+    <Compile Include="Migrations\202204180740427_ProductPictureTbUpdatd.designer.cs">
+      <DependentUpon>202204180740427_ProductPictureTbUpdatd.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="MyContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -106,6 +110,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202204150609499_add_product.resx">
       <DependentUpon>202204150609499_add_product.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202204180740427_ProductPictureTbUpdatd.resx">
+      <DependentUpon>202204180740427_ProductPictureTbUpdatd.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

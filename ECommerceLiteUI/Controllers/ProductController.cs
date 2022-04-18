@@ -24,7 +24,7 @@ namespace ECommerceLiteUI.Controllers
 
         //Bu controller a Admin gibi yetkili kişiler erişecektir
         //Burada ürünlerin listelenmesi, ekleme, silme, güncelleme işlemleri yapılacakır.
-        public ActionResult ProductList(int? page=1,string search = "")
+        public ActionResult ProductList(int? page = 1, string search = "")
         {
             //Alt Kategorileri repo aracılığıyla db'den çektik
             ViewBag.SubCategories = myCategoryRepo.AsQueryable().Where(x => x.BaseCategoryId != null).ToList();
@@ -67,20 +67,20 @@ namespace ECommerceLiteUI.Controllers
             }
             else
             {
-               
+
 
                 allProducts = myProductRepo.GetAll()
                     .Where(x => x.ProductName.ToLower().Contains(search.ToLower()) || x.Description.ToLower().Contains(search.ToLower())).ToList();
             }
             //Paging--> 1.yöntem bu yöntem en klasik yöntemdir.
             allProducts = allProducts.Skip(
-                (page.Value < 1 ? 1 : page.Value - 1) 
+                (page.Value < 1 ? 1 : page.Value - 1)
                 * pageSize //10 taneyi geç 10 taneyi al
                 )
                 .Take(pageSize) // 10 take al neden 10? Çünkü yukarıdaki pageSize 10'a eşitlenmiş
                 .ToList();
 
-            
+
             return View(allProducts);
 
             //return View(myProductRepo.GetAll());//üst satır gibi olur
@@ -172,64 +172,71 @@ namespace ECommerceLiteUI.Controllers
                 {
                     //Sıfırdan büyükse product tabloya eklendi
                     //Acaba bu producta resim seçmiş mi? resim seçtiyse o resimlerin yollarını kayıt et 
-                    if (model.Files.Any() && model.Files[0] !=null)
+                    if (model.Files.Any() && model.Files[0] != null)
                     {
-                        ProductPicture productPicture = new ProductPicture();
-                        productPicture.ProductId = product.Id;
-                        productPicture.RegisterDate = DateTime.Now;
-                        int counter = 1; // Bizim sistemde resim adedi 5 olarak belirlendiği için 
+                        int pictureInsertResult = 0;
                         foreach (var item in model.Files)
                         {
-                            if (counter == 5) break;
-                            if (item != null && item.ContentType.Contains("image") && item.ContentLength < 0)
+                            if (item != null && item.ContentType.Contains("image") && item.ContentLength > 0)
                             {
-                                string filename = SiteSettings.StringCharacterConverter(model.ProductName).ToLower().Replace("-", "");
+                                string productName = SiteSettings.StringCharacterConverter(model.ProductName).ToLower().Replace("-", "");
                                 string extensionName = Path.GetExtension(item.FileName);
-                                string directoryPath = Server.MapPath($"~/ProductPictures/{filename}/{model.ProductCode}");
+                                //Klasör adresi ProductPictures/iphone13/20202020
+                                string directoryPath = Server.MapPath($"~/ProductPictures/{productName}/{model.ProductCode}"); //klasör yapısının yolunu alıyoruz
                                 string guid = Guid.NewGuid().ToString().Replace("-", "");
-                                string filePath = Server.MapPath($"~/ProductPictures/{filename}/{model.ProductCode}/")
-                                    + filename + "-" + counter + "-" + guid + extensionName;
+                                //ProductPictures/iphone13/20202020/iphone13-guid.jpg
+                                string filePath = Server.MapPath
+                                    (
+                                    $"~/ProductPictures/{productName}/{model.ProductCode}/" +
+                                    $"{productName}-{guid}{extensionName}"
+                                    );
                                 if (!Directory.Exists(directoryPath))
                                 {
                                     Directory.CreateDirectory(directoryPath);
                                 }
+                                //Resmi o klasöre kayıt edelim
                                 item.SaveAs(filePath);
-                                //TODO: Buraya birisi çekidüzen vermeliiiiiiiiiiiiii
-                                if (counter == 1)
+                                //İşlem biti , DB'ye kayıt olacak
+                                ProductPicture picture = new ProductPicture()
                                 {
-                                    productPicture.ProductPicture1 = $"/ProductPicture/{filename}/{model.ProductCode}/" + filename + "-" + counter + "-" + guid + extensionName;
-                                }
-                                if (counter == 2)
-                                {
-                                    productPicture.ProductPicture2 = $"/ProductPicture/{filename}/{model.ProductCode}/" + filename + "-" + counter + "-" + guid + extensionName;
-                                }
-                                if (counter == 3)
-                                {
-                                    productPicture.ProductPicture3 = $"/ProductPicture/{filename}/{model.ProductCode}/" + filename + "-" + counter + "-" + guid + extensionName;
-                                }
+                                    ProductId = product.Id,
+                                    RegisterDate = DateTime.Now,
+                                    Picture = $"/ProductPictures/{productName}/{model.ProductCode}/" +
+                                    $"{productName}-{guid}{extensionName}",
+                                    IsDeleted = false
+
+                                };
+                                pictureInsertResult = myProductPictureRepo.Insert(picture);
+
+
                             }
-                            counter++;
                         }
-                        //TO DO: Yukarıyı for'a dönüştürebilir miyiz?
-                        //for (int i = 0; i < model.Files.Count; i++)
-                        //{
-
-                        //}
-
-                        int productPictureInserResult = myProductPictureRepo.Insert(productPicture);
-                        if (productPictureInserResult > 0)
+                        //pictureInsertResult kontrol edilecektir
+                        if (insertResult>0 && model.Files.Count==insertResult)
                         {
+                            //Bütün resimler eklenmiş
+                            TempData["ProductInsertSuccess"] = "Yeni ürün eklenmiştir";
+                            return RedirectToAction("ProductList","Product");
+                        }
+                        else if (insertResult>0 && model.Files.Count!=insertResult)
+                        {
+                            //Eksik eklemiş
+                            TempData["ProductInsertWarning"] = "Yeni ürün eklendi ama resimlerden bazıları beklenmedik bir sorun yüzünden eklenemedi! Eklenilemeyen" +
+                                "resimleri daha sonra tekrar ekleyinizs";
                             return RedirectToAction("ProductList", "Product");
                         }
-                        else
+                        else 
                         {
-                            ModelState.AddModelError("", "Ürün eklendi ama ürüne ait fotoğraf(lar) eklenirken beklenmedik bir hata oluştu! " +
-                                "Ürününüzün fotoğraflarını daha sonra tekrar eklemeyi deneyebilirsiniz...");
-                            return View(model);
+                            //Ürünü ekledi ama resimlerini eklemedi
+                            TempData["ProductInsertWarning"] = "Yeni ürün eklendi ama ürüne ait resimler eklenemedi.Resimleri daha sonra tekrar eklemeyi deneyiniz";
+                            return RedirectToAction("ProductList", "Product");
+
                         }
+
                     }
                     else
                     {
+                        TempData["ProductInsertSuccess"] = "Yeni ürün eklenmiştir";
                         return RedirectToAction("ProductList", "Product");
                     }
 
@@ -247,13 +254,13 @@ namespace ECommerceLiteUI.Controllers
                 return View(model);
             }
         }
-        
+
         public JsonResult GetProductDetails(int id) //mvc de sonu result ile biten geri dönüş tipleri vardır.
         {
             try
             {
                 var product = myProductRepo.GetById(id);
-                if (product!=null)
+                if (product != null)
                 {
                     //var data = product.Adapt<ProductViewModel>();
                     var data = new ProductViewModel()
@@ -267,9 +274,9 @@ namespace ECommerceLiteUI.Controllers
                         Quantity = product.Quantity,
                         RegisterDate = product.RegisterDate,
                         Price = product.Price
-                        
+
                     };
-                    return Json(new {isSuccess=true,data },JsonRequestBehavior.AllowGet);
+                    return Json(new { isSuccess = true, data }, JsonRequestBehavior.AllowGet);
                 }
                 else
                 {
@@ -280,8 +287,8 @@ namespace ECommerceLiteUI.Controllers
             catch (Exception ex)
             {
                 //ex loglansn
-                return Json(new { isSuccess=false});
-                
+                return Json(new { isSuccess = false });
+
             }
         }
 
@@ -290,7 +297,7 @@ namespace ECommerceLiteUI.Controllers
             try
             {
                 var product = myProductRepo.GetById(model.Id);
-                if (product!=null)
+                if (product != null)
                 {
                     product.ProductName = model.ProductName;
                     product.Description = model.Description;
@@ -301,7 +308,7 @@ namespace ECommerceLiteUI.Controllers
                     product.CategoryId = model.CategoryId;
 
                     int updateResult = myProductRepo.Update(); //DEğişimi görmek için int şeklinde gördük değeri
-                    if (updateResult>0)
+                    if (updateResult > 0)
                     {
                         TempData["EditSuccess"] = "Bilgiler başarıyla güncellenmiştir!";
                         return RedirectToAction("ProductList", "Product");

@@ -8,9 +8,10 @@ using System.Threading.Tasks;
 
 namespace ECommerceLiteEntity.Models
 {
-    public interface IBase 
+    public interface IBase
     {
-       
         DateTime RegisterDate { get; set; }
+        bool IsDeleted { get; set; }
+
     }
 }
