@@ -1,6 +1,8 @@
 ﻿using ECommerceLiteBLL.Account;
+using ECommerceLiteBLL.Repository;
 using ECommerceLiteEntity.Enums;
 using ECommerceLiteEntity.IdentityModels;
+using ECommerceLiteEntity.Models;
 using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
@@ -21,50 +23,88 @@ namespace ECommerceLiteUI
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
-            //NOT : Application_Start :
-            //Uygulama ilk kez çalıştığında bir defaya mahsus olmak üzere çalışır.
-            //Bu nedenle ben uyg. İlk kez çalıştığında db'de Roller ekli mi diye bakmak istiyorum.
+            #region CreateRoles_RolleriOlustur
+            //NOT: Application_Start :
+            //Uygulama ilk kez çalıştırıldığında bir defaya mahsus olmak üzere çalışır.
+            //Bu nedenle ben uyg. ilk kez çalıştığında DB'de Roller ekli mi diye bakmak istiyorum.
             //Ekli değilse rolleri Enum'dan çağırıp ekleyelim
-            //Ekli ise bir şey yapmaya gerek kalmıyor.
+            //Ekli ise bişey yapmaya gerek kalmıyor.
 
-            //Adım 1: Rollere bakacağım --> Role Manager
+            //adım 1: Rollere bakacağım şey --> Role Manager
             var myRoleManager = MembershipTools.NewRoleManager();
-            //Adım 2: Rollerin isimlerini almak (ipucu --> Enum)
-            var allRoles = Enum.GetNames(typeof(Roles));//İ.eride kaç enum var ise string dizi olarak getirecek bana
-            //Adım 3: Bize gelen diziyi tek tek tek döneceğiz (döngü)
+            //adım 2: Rollerin isimlerini almak (ipucu --> Enum)
+            var allRoles = Enum.GetNames(typeof(Roles));
+            //adım 3: Bize gelen diziyi tek tek tek döneceğiz (döngü)
+
             foreach (var item in allRoles)
             {
-                //Adım 4: Acaba bu rol DB'de ekli mi?
-                if (!myRoleManager.RoleExists(item))//eğer rol yoksa ekli değilse
+                //adım 4: Acaba bu rol DB'de ekli mi? 
+                if (!myRoleManager.RoleExists(item)) // Eğer bu role ekli değilse?
                 {
                     //Adım 5: Rolü ekle!
-                    //------------1. YOL-------------
-                    //ApplicationRole role = new ApplicationRole()
-                    //{
-                    //    Name = item
-                    //};
-                    //myRoleManager.Create(role);
-                    //------------2. YOL-------------
-                    myRoleManager.Create(new ApplicationRole()
+                    //1.yol
+                    ApplicationRole role = new ApplicationRole()
                     {
                         Name = item,
-                        IsDeleted=false
+                        IsDeleted = false
+                    };
+                    myRoleManager.Create(role);
+                    //2.yol
+                    //myRoleManager.Create(new ApplicationRole()
+                    //{
+                    //    Name = item
+                    //});
 
-                    });
+
+                }
+            }
+            #endregion
+
+
+
+            #region CreateDefaultAdmin_SistemAdminiOlustur
+
+            //NOT: Proje ilk ayağa kalkığında arka planda default admin kullanıcısı ekeleylim
+            //NOT: Kendi isminizle admin olarak kayıt olmanız için Admin register sayfası zaman kısıtlılığından yapamadık. Geniş bir zamanda eklenebilir.
+            var myUserManager = MembershipTools.NewUserManager();
+            var allUsers = myUserManager.Users;
+            AdminRepo myAdminRepo = new AdminRepo();
+            if (myAdminRepo.GetAll().Count == 0) // Hiç admin yoksa ekleyelim 
+            {
+                ApplicationUser adminUser = new ApplicationUser()
+                {
+                    Name = "303",
+                    Surname = "Admin",
+                    RegisterDate = DateTime.Now,
+                    Email = "nayazilim303@gmail.com",
+                    UserName = "nayazilim303@gmail.com",
+                    IsDeleted = false,
+                    EmailConfirmed = true
+                };
+
+                var createResult = myUserManager.Create(adminUser, "admin12345");
+                if (createResult.Succeeded)
+                {
+                    myUserManager.AddToRole(adminUser.Id, Roles.Admin.ToString());
+                    Admin admin = new Admin()
+                    {
+                        UserId = adminUser.Id,
+                        TCNumber = "00000000000",
+                        IsDeleted = false,
+                        LastActiveTime = DateTime.Now
+                    };
+                    myAdminRepo.Insert(admin);
                 }
             }
 
-        }
-        protected void Application_Error()
-        {
-            //NOT : İhtiyacım olursa internetten Global.asax'ın metotlarına bakıp kullanabilirim...
+            #endregion
 
-            //Örneğin: Application_Error : Uygulama içinde istenmeyen bir hata meydana geldiğinde çalışır.
-            //Bu metodu yazarsak o hatayı loglayıpsorunu çözebiliriz. 
 
-            Exception ex = Server.GetLastError();
 
-            //ex loglanacak
+
+
+
+
 
         }
     }
