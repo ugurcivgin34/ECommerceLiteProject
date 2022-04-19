@@ -31,8 +31,13 @@
     <!-- Google Font: Source Sans Pro -->
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
 
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
 
+    <!--sayfanın altına sayac eklemek için page sayacı-->
+    @*<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">*@
+
+    @*<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>*@
 
 
 </head>
@@ -43,31 +48,39 @@
         <nav class="main-header navbar navbar-expand navbar-white navbar-light">
             <!-- Left navbar links -->
             <ul class="navbar-nav">
+
                 <li class="nav-item">
                     <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
                 </li>
+
                 <li class="nav-item d-none d-sm-inline-block">
-                    <a href="index3.html" class="nav-link">Home</a>
+                    <a href="/Home/Index" class="nav-link">Anasayfa</a>
                 </li>
-              
+
+                <li class="nav-item d-none d-sm-inline-block">
+                    <a href="/Account/Logout" class="nav-link">Çıkış Yap</a>
+                </li>
+
             </ul>
-
-          
         </nav>
-
         <!-- /.navbar -->
         <!-- Main Sidebar Container -->
         <aside class="main-sidebar sidebar-dark-primary elevation-4">
             <!-- Brand Logo -->
-            <a href="index3.html" class="brand-link">
-                <img src="~/AdminLTE/dist/img/öküz.jpeg" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
+            <a href="/Admin/Dashboard" class="brand-link">
+                <img src="~/AdminLTE/dist/img/avatar.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
                      style="opacity: .8">
-                <span class="brand-text font-weight-light">303 Admin Paneli</span>
+                <span class="brand-text font-weight-light">Yönetim Paneli</span>
             </a>
 
             <!-- Sidebar -->
             <div class="sidebar">
-                @*Buraya sol taraftaki menü gelecek*@
+                @{
+                    Html.RenderAction("AdminSideBarResult", "Partials");
+
+                    Html.RenderAction("AdminSideBarMenuResult", "Partials");
+                }
+
                 <!-- Sidebar user panel (optional) -->
             </div>
             <!-- /.sidebar -->

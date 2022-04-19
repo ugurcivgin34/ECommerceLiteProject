@@ -15,6 +15,7 @@ using System.Web.Mvc;
 
 namespace ECommerceLiteUI.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class ProductController : Controller
     {
         CategoryRepo myCategoryRepo = new CategoryRepo();
@@ -123,11 +124,11 @@ namespace ECommerceLiteUI.Controllers
                     }));
                 ViewBag.SubCategories = subCategories;
 
-                //if (!ModelState.IsValid)//Eğer modelstate isvalid değilse
-                //{
-                //    ModelState.AddModelError("", "Veri girişleri düzgün olmalıdır");
-                //    return View(model);
-                //}
+                if (!ModelState.IsValid)//Eğer modelstate isvalid değilse
+                {
+                    ModelState.AddModelError("", "Veri girişleri düzgün olmalıdır");
+                    return View(model);
+                }
 
                 if (model.CategoryId <= 0)
                 {
@@ -245,7 +246,8 @@ namespace ECommerceLiteUI.Controllers
                 }
                 else
                 {
-                    ModelState.AddModelError("", "HATA: Ürün ekleme işleminde bir hata oluştu! Tekrar deneyiniz!");
+                    ModelState.AddModelError("",
+                       "HATA: Ürün ekleme işleminde bir hata oluştu! Tekrar deneyiniz!");
                     return View(model);
                 }
             }

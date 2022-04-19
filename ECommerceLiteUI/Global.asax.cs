@@ -35,7 +35,6 @@ namespace ECommerceLiteUI
             //adım 2: Rollerin isimlerini almak (ipucu --> Enum)
             var allRoles = Enum.GetNames(typeof(Roles));
             //adım 3: Bize gelen diziyi tek tek tek döneceğiz (döngü)
-
             foreach (var item in allRoles)
             {
                 //adım 4: Acaba bu rol DB'de ekli mi? 
@@ -55,21 +54,19 @@ namespace ECommerceLiteUI
                     //    Name = item
                     //});
 
-
                 }
             }
+
             #endregion
 
-
-
             #region CreateDefaultAdmin_SistemAdminiOlustur
-
             //NOT: Proje ilk ayağa kalkığında arka planda default admin kullanıcısı ekeleylim
             //NOT: Kendi isminizle admin olarak kayıt olmanız için Admin register sayfası zaman kısıtlılığından yapamadık. Geniş bir zamanda eklenebilir.
+
             var myUserManager = MembershipTools.NewUserManager();
             var allUsers = myUserManager.Users;
             AdminRepo myAdminRepo = new AdminRepo();
-            if (myAdminRepo.GetAll().Count == 0) // Hiç admin yoksa ekleyelim 
+            if (myAdminRepo.GetAll().Count == 0) // Hiç admin yoksa ekleyelim
             {
                 ApplicationUser adminUser = new ApplicationUser()
                 {
@@ -81,7 +78,6 @@ namespace ECommerceLiteUI
                     IsDeleted = false,
                     EmailConfirmed = true
                 };
-
                 var createResult = myUserManager.Create(adminUser, "admin12345");
                 if (createResult.Succeeded)
                 {
@@ -95,17 +91,20 @@ namespace ECommerceLiteUI
                     };
                     myAdminRepo.Insert(admin);
                 }
+
             }
+
 
             #endregion
 
+        }
+        protected void Application_Error()
+        {
+            //NOT: ihtiyacım olursa internetten Global.asax'ın metotlarına bakıp kullanabilirim
+            //ÖRN: Application_Error : Uygulama içinde istenmeyen bir hata meydana geldiğinde çalışır. Bu metodu yazarsak o hatayı loglayıp sorunu çözebiliriz.
 
-
-
-
-
-
-
+            Exception ex = Server.GetLastError();
+            //ex loglanacak
         }
     }
 }

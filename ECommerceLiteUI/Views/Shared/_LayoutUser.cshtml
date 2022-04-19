@@ -51,8 +51,26 @@
                     <li><a href="#"><i class="fa fa-map-marker"></i> İstanbul - Kadıköy</a></li>
                 </ul>
                 <ul class="header-links pull-right">
-
                     <!--Buraya partial gelecek..-->
+
+                    @{
+                        var user = MembershipTools.GetUser();
+                        if (user != null)
+                        {
+                            if (MembershipTools.NewUserManager().IsInRoleAsync(user.Id, ECommerceLiteEntity.Enums.Roles.Admin.ToString()).Result)
+                            {
+                                <li>
+                                    <div>
+                                        <a href="/Admin/Dashboard" class="btn btn-default" style="background-color:#D10024;color:white">
+                                            ADMİN PANEL
+                                        </a>
+                                    </div>
+                                </li>
+                            }
+                        }
+                    }
+
+
                     <!--Sistemde biri varsa çıkış yap yazısı, kimse yok giriş yap yazısı gelecek-->
                     @if (MembershipTools.GetUser() != null)
                     {
