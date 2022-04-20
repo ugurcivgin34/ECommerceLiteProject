@@ -148,17 +148,17 @@ namespace ECommerceLiteUI.Controllers
                 //Ürün tabloya kayıt olacak.
                 //TO DO: Mapleme yapılacak.
 
-                //Product product = new Product()
-                //{
-                //    ProductName = model.ProductName,
-                //    Description = model.Description,
-                //    ProductCode = model.ProductCode,
-                //    CategoryId = model.CategoryId,
-                //    Discount = model.Discount,
-                //    Quantity = model.Quantity,
-                //    RegisterDate = DateTime.Now,
-                //    Price = model.Price
-                //};
+                Product product = new Product()
+                {
+                    ProductName = model.ProductName,
+                    Description = model.Description,
+                    ProductCode = model.ProductCode,
+                    CategoryId = model.CategoryId,
+                    Discount = model.Discount,
+                    Quantity = model.Quantity,
+                    RegisterDate = DateTime.Now,
+                    Price = model.Price
+                };
                 //Mapleme yapıldı.
                 //Mapster paketi indirildi.Mapster bir objedeki diğer bir objeye zehmetsizce aktarır.
                 //Aktarım yapabilmesi için A objesiyle B objesinin içindeki propertylerin isimleri ve tipleri birebir aynı olmalıdır.
@@ -167,7 +167,7 @@ namespace ECommerceLiteUI.Controllers
                 //Bir dto objesinin içindeki verileri alır asıl objenin içine aktarır.
                 //Asıl objesinşn verilerini dto objesinin içindeki propertylere aktarır.
 
-                Product product = model.Adapt<Product>();
+                //Product product = model.Adapt<Product>();
                 //Product product = model.Adapt<ProductViewModel, Product>();//üsttekinin 2. yolu
 
                 int insertResult = myProductRepo.Insert(product);

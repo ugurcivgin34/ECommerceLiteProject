@@ -16,7 +16,7 @@ namespace ECommerceLiteUI.Models
 
         public int Id { get; set; }
 
-        public DateTime RegisterDate { get; set; } = DateTime.Now;
+        public DateTime RegisterDate { get; set; }
 
         [Required]
         [StringLength(maximumLength: 100, MinimumLength = 2, ErrorMessage = "Ürün adı 2 ile 100 karakter aralığında olmalıdır!")]
@@ -63,31 +63,28 @@ namespace ECommerceLiteUI.Models
             {
                 //ÖRN: Elektronik kat.--> Akıllı Telefon kat. --> ürün(iphone 13 pro max)
                 Category = myCategoryRepo.GetById(CategoryId);
+                Category.CategoryList = new List<Category>();
                 // Akıllı telefon kat artık elimde!
                 // Akıllı telefon kat. bir üst kategorisi var mı?
                 // ÖRN: Elek--> Akkıl tel --> applegiller
                 if (Category.BaseCategoryId != null
                     && Category.BaseCategoryId > 0)
                 {
-                    Category.CategoryList = new List<Category>();
-
                     Category.BaseCategory = myCategoryRepo.GetById
                         (Category.BaseCategoryId.Value);
                     Category.CategoryList.Add(Category.BaseCategory);
 
                     bool isOver = false;
-                    Category baseCategory = Category.BaseCategory;
+                    Category currentBaseCategory = Category.BaseCategory;
                     while (!isOver)
                     {
-                        if (baseCategory.BaseCategoryId > 0)
+                        if (currentBaseCategory.BaseCategoryId != null
+                            && currentBaseCategory.BaseCategoryId > 0)
                         {
-
-                            Category.CategoryList.Add(
-                                myCategoryRepo.GetById
-                                (baseCategory.BaseCategoryId.Value));
-
-                            baseCategory = myCategoryRepo.GetById(
-                                baseCategory.BaseCategoryId.Value);
+                            // mevcuttaki ana kategorinin üst kategorisi varmış
+                            // onu alalım
+                            currentBaseCategory = myCategoryRepo.GetById(currentBaseCategory.BaseCategoryId.Value);
+                            Category.CategoryList.Add(currentBaseCategory);
                         }
                         else
                         {
@@ -96,6 +93,7 @@ namespace ECommerceLiteUI.Models
                     }
                     Category.CategoryList =
                         Category.CategoryList.OrderBy(x => x.Id).ToList();
+
 
                 }
             }
