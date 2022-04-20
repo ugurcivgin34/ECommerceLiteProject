@@ -78,17 +78,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Migrations\202204041145458_initialDB.cs" />
-    <Compile Include="Migrations\202204041145458_initialDB.designer.cs">
-      <DependentUpon>202204041145458_initialDB.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202204150609499_add_product.cs" />
-    <Compile Include="Migrations\202204150609499_add_product.designer.cs">
-      <DependentUpon>202204150609499_add_product.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202204180740427_ProductPictureTbUpdatd.cs" />
-    <Compile Include="Migrations\202204180740427_ProductPictureTbUpdatd.designer.cs">
-      <DependentUpon>202204180740427_ProductPictureTbUpdatd.cs</DependentUpon>
+    <Compile Include="Migrations\202204201430144_updatedToproductPicture.cs" />
+    <Compile Include="Migrations\202204201430144_updatedToproductPicture.designer.cs">
+      <DependentUpon>202204201430144_updatedToproductPicture.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="MyContext.cs" />
@@ -105,14 +97,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202204041145458_initialDB.resx">
-      <DependentUpon>202204041145458_initialDB.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202204150609499_add_product.resx">
-      <DependentUpon>202204150609499_add_product.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202204180740427_ProductPictureTbUpdatd.resx">
-      <DependentUpon>202204180740427_ProductPictureTbUpdatd.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202204201430144_updatedToproductPicture.resx">
+      <DependentUpon>202204201430144_updatedToproductPicture.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

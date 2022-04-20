@@ -3,7 +3,7 @@
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class initialDB : DbMigration
+    public partial class updatedToproductPicture : DbMigration
     {
         public override void Up()
         {
@@ -29,6 +29,7 @@
                         Surname = c.String(nullable: false, maxLength: 30),
                         RegisterDate = c.DateTime(nullable: false),
                         ActivationCode = c.String(),
+                        IsDeleted = c.Boolean(nullable: false),
                         Email = c.String(maxLength: 256),
                         EmailConfirmed = c.Boolean(nullable: false),
                         PasswordHash = c.String(),
@@ -78,6 +79,7 @@
                         RegisterDate = c.DateTime(nullable: false),
                         OrderNumber = c.String(nullable: false, maxLength: 11),
                         CustomerTCNumber = c.String(maxLength: 11),
+                        IsDeleted = c.Boolean(nullable: false),
                     })
                 .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.Customers", t => t.CustomerTCNumber)
@@ -95,6 +97,7 @@
                         ProductPrice = c.Decimal(nullable: false, precision: 18, scale: 2),
                         Discount = c.Double(nullable: false),
                         TotalPrice = c.Decimal(nullable: false, precision: 18, scale: 2),
+                        IsDeleted = c.Boolean(nullable: false),
                     })
                 .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.Orders", t => t.OrderId, cascadeDelete: true)
@@ -109,12 +112,13 @@
                         Id = c.Int(nullable: false, identity: true),
                         RegisterDate = c.DateTime(nullable: false),
                         ProductName = c.String(nullable: false, maxLength: 100),
-                        Desctription = c.String(nullable: false, maxLength: 500),
+                        Description = c.String(nullable: false, maxLength: 500),
                         ProductCode = c.String(nullable: false, maxLength: 8),
                         Price = c.Decimal(nullable: false, precision: 18, scale: 2),
                         Quantity = c.Int(nullable: false),
                         Discount = c.Double(nullable: false),
                         CategoryId = c.Int(nullable: false),
+                        IsDeleted = c.Boolean(nullable: false),
                     })
                 .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.Categories", t => t.CategoryId, cascadeDelete: true)
@@ -130,6 +134,7 @@
                         CategoryName = c.String(nullable: false, maxLength: 100),
                         CategoryDescription = c.String(maxLength: 100),
                         BaseCategoryId = c.Int(),
+                        IsDeleted = c.Boolean(nullable: false),
                     })
                 .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.Categories", t => t.BaseCategoryId)
@@ -142,11 +147,8 @@
                         Id = c.Int(nullable: false, identity: true),
                         RegisterDate = c.DateTime(nullable: false),
                         ProductId = c.Int(nullable: false),
-                        ProductPicture1 = c.String(maxLength: 400),
-                        ProductPicture2 = c.String(maxLength: 400),
-                        ProductPicture3 = c.String(maxLength: 400),
-                        ProductPicture4 = c.String(maxLength: 400),
-                        ProductPicture5 = c.String(maxLength: 400),
+                        Picture = c.String(maxLength: 400),
+                        IsDeleted = c.Boolean(nullable: false),
                     })
                 .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.Products", t => t.ProductId, cascadeDelete: true)
@@ -197,6 +199,7 @@
                         Id = c.String(nullable: false, maxLength: 128),
                         Name = c.String(nullable: false, maxLength: 256),
                         Description = c.String(maxLength: 200),
+                        IsDeleted = c.Boolean(),
                         Discriminator = c.String(nullable: false, maxLength: 128),
                     })
                 .PrimaryKey(t => t.Id)

@@ -7,13 +7,13 @@ namespace ECommerceLiteDAL.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.4.4")]
-    public sealed partial class ProductPictureTbUpdatd : IMigrationMetadata
+    public sealed partial class updatedToproductPicture : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(ProductPictureTbUpdatd));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(updatedToproductPicture));
         
         string IMigrationMetadata.Id
         {
-            get { return "202204180740427_ProductPictureTbUpdatd"; }
+            get { return "202204201430144_updatedToproductPicture"; }
         }
         
         string IMigrationMetadata.Source

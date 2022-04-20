@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using ECommerceLiteBLL.Repository;
+using ECommerceLiteUI.Models;
 
 namespace ECommerceLiteUI.Controllers
 {
@@ -24,10 +25,24 @@ namespace ECommerceLiteUI.Controllers
 
         public PartialViewResult AdminSideBarProducts()
         {
-            TempData["ProductCount"] = myCategoryRepo.GetAll().Count();
+            TempData["ProductCount"] = myProductRepo.GetAll().Count();
             return PartialView("_PartialAdminSideBarProducts");
         }
 
+        public PartialViewResult ShoppingCart()
+        {
+            var shoppingCart = Session["ShoppingCart"]
+                as List<ProductViewModel>;
+            if (shoppingCart == null)
+            {
+                return PartialView("_PartialShoppingCart",
+                    new List<ProductViewModel>());
+            }
+            else
+            {
+                return PartialView("_PartialShoppingCart", shoppingCart);
+            }
 
+        }
     }
 }
