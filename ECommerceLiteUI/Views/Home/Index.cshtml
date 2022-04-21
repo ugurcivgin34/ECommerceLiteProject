@@ -6,8 +6,26 @@
     Layout = "~/Views/Shared/_LayoutUser.cshtml";
 }
 
+@if (TempData["AddToCartSuccess"] != null)
+{
+    <div class="callout callout-success">@TempData["AddToCartSuccess"]</div>
+}
 
-@*NOT: Buraya TempData ile sepet gelecek*@
+@if (TempData["AddToCartFailed"] != null)
+{
+    <div class="callout callout-success">@TempData["AddToCartFailed"]</div>
+}
+
+@if (TempData["BuySuccess"] != null)
+{
+    <div class="callout callout-success">@TempData["BuySuccess"]</div>
+}
+
+@if (TempData["BuyFailed"] != null)
+{
+    <div class="callout callout-danger">@TempData["BuyFailed"]</div>
+}
+
 
 <!-- section title -->
 <div class="col-md-12">
@@ -69,7 +87,7 @@
 
                                 @if (item.Discount > 0)
                                 {
-                                   
+
                                     <div class="product-label">
                                         <span class="sale">-@item.Discount%</span>
                                     </div>
@@ -83,7 +101,7 @@
                                 {
                                     decimal salePrice = item.Price - (item.Price * (decimal)(item.Discount) / 100);
 
-                            <h4 class="product-price">@salePrice ₺<del class="product-old-price">@item.Price ₺</del></h4>
+                                    <h4 class="product-price">@salePrice ₺<del class="product-old-price">@item.Price ₺</del></h4>
                                 }
                                 else
                                 {
