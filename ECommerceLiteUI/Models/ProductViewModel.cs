@@ -11,6 +11,7 @@ namespace ECommerceLiteUI.Models
 {
     public class ProductViewModel
     {
+
         CategoryRepo myCategoryRepo = new CategoryRepo();
         ProductPictureRepo myProductPictureRepo = new ProductPictureRepo();
 
@@ -27,13 +28,11 @@ namespace ECommerceLiteUI.Models
         [StringLength(maximumLength: 500, ErrorMessage = "Ürün açıklaması en fazla 500 karakter olmalıdır!")]
         [Display(Name = "Ürün Açıklaması")]
         public string Description { get; set; }
-
         [Required]
         [Display(Name = "Ürün Kodu")]
         [StringLength(maximumLength: 8, MinimumLength = 8, ErrorMessage = "Ürün kodu en fazla 8 karakter olmalıdır!")]
         [Index(IsUnique = true)] // Benzersiz tekrarsız olmasını sağlar
         public string ProductCode { get; set; }
-
         [Required]
         [DataType(DataType.Currency)]
         public decimal Price { get; set; }
@@ -41,9 +40,10 @@ namespace ECommerceLiteUI.Models
         public double Discount { get; set; }
         public int CategoryId { get; set; }
 
-        public Category Category { get; set; }
+        public Category CategoryOfProduct { get; set; }
 
-        public List<ProductPicture> ProductPictures { get; set; }= new List<ProductPicture>();
+        public List<ProductPicture> PicturesOfProduct { get; set; }
+            = new List<ProductPicture>();
 
         // Ürün eklenirken ürüne ait resimlere seçilebilir
         //Seçilen resimleri hafıza tutacak propery
@@ -53,7 +53,7 @@ namespace ECommerceLiteUI.Models
         {
             if (Id > 0)
             {
-                ProductPictures = myProductPictureRepo.AsQueryable()
+                PicturesOfProduct = myProductPictureRepo.AsQueryable()
                     .Where(x => x.ProductId == Id).ToList();
             }
         }
@@ -62,20 +62,20 @@ namespace ECommerceLiteUI.Models
             if (CategoryId > 0)
             {
                 //ÖRN: Elektronik kat.--> Akıllı Telefon kat. --> ürün(iphone 13 pro max)
-                Category = myCategoryRepo.GetById(CategoryId);
-                Category.CategoryList = new List<Category>();
+                CategoryOfProduct = myCategoryRepo.GetById(CategoryId);
+                CategoryOfProduct.CategoryList = new List<Category>();
                 // Akıllı telefon kat artık elimde!
                 // Akıllı telefon kat. bir üst kategorisi var mı?
                 // ÖRN: Elek--> Akkıl tel --> applegiller
-                if (Category.BaseCategoryId != null
-                    && Category.BaseCategoryId > 0)
+                if (CategoryOfProduct.BaseCategoryId != null
+                    && CategoryOfProduct.BaseCategoryId > 0)
                 {
-                    Category.BaseCategory = myCategoryRepo.GetById
-                        (Category.BaseCategoryId.Value);
-                    Category.CategoryList.Add(Category.BaseCategory);
+                    CategoryOfProduct.BaseCategory = myCategoryRepo.GetById
+                        (CategoryOfProduct.BaseCategoryId.Value);
+                    CategoryOfProduct.CategoryList.Add(CategoryOfProduct.BaseCategory);
 
                     bool isOver = false;
-                    Category currentBaseCategory = Category.BaseCategory;
+                    Category currentBaseCategory = CategoryOfProduct.BaseCategory;
                     while (!isOver)
                     {
                         if (currentBaseCategory.BaseCategoryId != null
@@ -84,19 +84,21 @@ namespace ECommerceLiteUI.Models
                             // mevcuttaki ana kategorinin üst kategorisi varmış
                             // onu alalım
                             currentBaseCategory = myCategoryRepo.GetById(currentBaseCategory.BaseCategoryId.Value);
-                            Category.CategoryList.Add(currentBaseCategory);
+                            CategoryOfProduct.CategoryList.Add(currentBaseCategory);
                         }
                         else
                         {
                             isOver = true;
                         }
                     }
-                    Category.CategoryList =
-                        Category.CategoryList.OrderBy(x => x.Id).ToList();
+                    CategoryOfProduct.CategoryList =
+                        CategoryOfProduct.CategoryList.OrderBy(x => x.Id).ToList();
 
 
                 }
             }
         }
+
+
     }
 }

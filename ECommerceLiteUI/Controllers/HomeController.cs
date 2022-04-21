@@ -107,7 +107,6 @@ namespace ECommerceLiteUI.Controllers
                     // var productAddToCart = product.Adapt<ProductViewModel>();
                     var productAddToCart = new ProductViewModel()
                     {
-                       
                         Id = product.Id,
                         ProductName = product.ProductName,
                         Description = product.Description,
