@@ -5,6 +5,7 @@ using ECommerceLiteEntity.Enums;
 using ECommerceLiteEntity.IdentityModels;
 using ECommerceLiteEntity.Models;
 using ECommerceLiteEntity.ViewModels;
+using ECommerceLiteUI.LogManaging;
 using ECommerceLiteUI.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
@@ -301,11 +302,11 @@ namespace ECommerceLiteUI.Controllers
         [Authorize]
         public ActionResult UpdatePassword()
         {
-            
+
             return View();
         }
-       
-        
+
+
 
         [HttpPost]
         [Authorize]
@@ -322,7 +323,7 @@ namespace ECommerceLiteUI.Controllers
                     //Bu kişi mevcut şifresinin aynısını yeni şifre olarak yutturmaya çalışıyor
                     ModelState.AddModelError("", "Yeni şifreniz mevcut şifrenizle aynı olmasın madem değiştirmek istedin!!");
                     return View(model);
-                } 
+                }
 
                 //Yeni şifre ile şifre tekrarı uyuşuyor mu?
                 if (model.NewPassword != model.ConfirmPassword)
@@ -481,11 +482,14 @@ namespace ECommerceLiteUI.Controllers
                 //Herkes rolüne uygun default bir sayfaya gitsin
                 if (user.Roles.FirstOrDefault().RoleId == myRoleManager.FindByName(Enum.GetName(typeof(Roles), Roles.Admin)).Id)
                 {
+                    Logger.LogMessage("Sisteme bir admin girdi.", "Account/Login", user.Id);
                     return RedirectToAction("Dashboard", "Admin");
                 }
 
                 if (user.Roles.FirstOrDefault().RoleId == myRoleManager.FindByName(Enum.GetName(typeof(Roles), Roles.Customer)).Id)
                 {
+                    Logger.LogMessage("Sisteme bir müşteri girdi.", "Account/Login", user.Id);
+
                     return RedirectToAction("Index", "Home");
                 }
 
@@ -508,7 +512,7 @@ namespace ECommerceLiteUI.Controllers
             }
             catch (Exception ex)
             {
-
+                Logger.LogMessage($"Giriş yaparken hata olmuş:\n{ex.ToString()}", "Account/Login", model.Email);
                 ModelState.AddModelError("", "Beklenmedik hata oluştu! Tekrar deneyiniz!");
                 return View(model);
             }

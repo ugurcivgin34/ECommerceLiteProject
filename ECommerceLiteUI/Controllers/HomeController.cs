@@ -13,6 +13,7 @@ using QRCoder;
 using System.Drawing;
 using ECommerceLiteBLL.Settings;
 using ECommerceLiteEntity.ViewModels;
+using ECommerceLiteUI.LogManaging;
 
 namespace ECommerceLiteUI.Controllers
 {
@@ -259,7 +260,7 @@ namespace ECommerceLiteUI.Controllers
                             .Where(x => x.OrderId == customerOrder.Id).ToList();
 
                         string message = $"Merhaba {user.Name} {user.Surname} <br/><br/>" +
-                        $"{orderDetailList.Sum(x=>x.Quantity)} adet ürünlerinizin siparişini aldık.<br/><br/>" +
+                        $"{orderDetailList.Sum(x => x.Quantity)} adet ürünlerinizin siparişini aldık.<br/><br/>" +
                         $"Toplam Tutar:{orderDetailList.Sum(x => x.TotalPrice).ToString()} ₺ <br/> <br/>" +
                         $"<table><tr><th>Ürün Adı</th><th>Adet</th><th>Birim Fiyat</th><th>Toplam</th></tr>";
                         foreach (var item in orderDetailList)
@@ -282,6 +283,7 @@ namespace ECommerceLiteUI.Controllers
                         TempData["BuySuccess"] = "Siparişiniz oluşturuldu. Sipariş Numarası: " + customerOrder.OrderNumber;
                         //temizlik
                         Session["ShoppingCart"] = null;
+                        Logger.LogMessage($"{user.Name} {user.Surname} {orderDetailList.Sum(x => x.TotalPrice)} liralık alışveriş yaptı","Home/Buy");
                         return RedirectToAction("Index", "Home");
 
                     }
@@ -317,6 +319,7 @@ namespace ECommerceLiteUI.Controllers
             catch (Exception ex)
             {
                 //ex loglanacak
+                Logger.LogMessage($"Satın alma işleminde hata: " + ex.ToString(), "Home/Buy", MembershipTools.GetUser().Id);
                 TempData["BuyFailed"] = "Beklenmedik bir hata nedeniyle siparişiniz oluşturulamadı";
                 return RedirectToAction("Index", "Home");
             }
