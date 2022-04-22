@@ -28,7 +28,7 @@ namespace ECommerceLiteUI.Controllers
         public ActionResult ProductList(int? page = 1, string search = "")
         {
             //Alt Kategorileri repo aracılığıyla db'den çektik
-            ViewBag.SubCategories = myCategoryRepo.AsQueryable().Where(x => x.BaseCategoryId != null).ToList();
+            ViewBag.SubCategories = GetSubCategories();
             //Sayfaya bazı bilgiler göndereceğiz
             var totalProduct = myProductRepo.GetAll().Count; // toplam ürün sayısı
             ViewBag.TotalProduct = totalProduct; // toplam ürün sayısını sayfaya göndereceğiz
@@ -81,8 +81,8 @@ namespace ECommerceLiteUI.Controllers
                 .Take(pageSize) // 10 take al neden 10? Çünkü yukarıdaki pageSize 10'a eşitlenmiş
                 .ToList();
 
-        
-            
+
+
 
             return View(allProducts);
 
@@ -98,7 +98,7 @@ namespace ECommerceLiteUI.Controllers
             //Linq
             //select * from Categories where BaseCategoriesId is not null
 
-            myCategoryRepo.AsQueryable().Where(x => x.BaseCategoryId != null).ToList().ForEach(x => subCategories.Add(
+            GetSubCategories().ForEach(x => subCategories.Add(
                 new SelectListItem()
                 {
                     Text = x.CategoryName,
@@ -116,12 +116,12 @@ namespace ECommerceLiteUI.Controllers
             try
             {
                 List<SelectListItem> subCategories = new List<SelectListItem>();
-                myCategoryRepo.AsQueryable().Where(x => x.BaseCategoryId != null).ToList().ForEach(x => subCategories.Add(
-                    new SelectListItem()
-                    {
-                        Text = x.CategoryName,
-                        Value = x.Id.ToString()
-                    }));
+                GetSubCategories().ForEach(x => subCategories.Add(
+                     new SelectListItem()
+                     {
+                         Text = x.CategoryName,
+                         Value = x.Id.ToString()
+                     }));
                 ViewBag.SubCategories = subCategories;
 
                 if (!ModelState.IsValid)//Eğer modelstate isvalid değilse
@@ -215,20 +215,20 @@ namespace ECommerceLiteUI.Controllers
                             }
                         }
                         //pictureInsertResult kontrol edilecektir
-                        if (pictureInsertResult > 0 && model.Files.Count== pictureInsertResult)
+                        if (pictureInsertResult > 0 && model.Files.Count == pictureInsertResult)
                         {
                             //Bütün resimler eklenmiş
                             TempData["ProductInsertSuccess"] = "Yeni ürün eklenmiştir";
-                            return RedirectToAction("ProductList","Product");
+                            return RedirectToAction("ProductList", "Product");
                         }
-                        else if (pictureInsertResult > 0 && model.Files.Count!= pictureInsertResult)
+                        else if (pictureInsertResult > 0 && model.Files.Count != pictureInsertResult)
                         {
                             //Eksik eklemiş
                             TempData["ProductInsertWarning"] = "Yeni ürün eklendi ama resimlerden bazıları beklenmedik bir sorun yüzünden eklenemedi! Eklenilemeyen" +
                                 "resimleri daha sonra tekrar ekleyinizs";
                             return RedirectToAction("ProductList", "Product");
                         }
-                        else 
+                        else
                         {
                             //Ürünü ekledi ama resimlerini eklemedi
                             TempData["ProductInsertWarning"] = "Yeni ürün eklendi ama ürüne ait resimler eklenemedi.Resimleri daha sonra tekrar eklemeyi deneyiniz";
@@ -337,6 +337,31 @@ namespace ECommerceLiteUI.Controllers
                 TempData["EditFailed"] = "Beklenmedik bir hata nedeniyle ürün bilgileri güncellenemedi!";
                 return RedirectToAction("ProductList", "Product");
             }
+        }
+
+        public List<Category> GetSubCategories()
+        {
+            //Alt kategorisi olmasına rağmen Product ekleme sayfasındaki comboya gelen kategoriler var.
+            //Bu bugı bir metot ekleyerek çözümledik.Metotta kategorinin id'si kategori tablosunda basecategoryId alanında geçiyorsa contitune ile o
+            //kategoriyi atladık ve listemize almadık.Böylece sadece çocuk kategoriler gelecektir.Ebevein kategoriler sayfaya gelemeyecektir.
+            //eğer caterpo.asq().where(x => x.bas == id)
+            //continue;
+            List<Category> returnList = new List<Category>();
+            var categoryList = myCategoryRepo.AsQueryable().Where(x => x.BaseCategoryId != null).ToList();
+            foreach (var item in categoryList)
+            {
+                if (myCategoryRepo.AsQueryable().Count(x => x.BaseCategoryId == item.Id) > 0)
+                {
+                    continue;
+                }
+                else
+                {
+                    returnList.Add(item);
+                }
+            }
+
+
+            return returnList;
         }
 
     }
