@@ -78,9 +78,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Migrations\202204201430144_updatedToproductPicture.cs" />
-    <Compile Include="Migrations\202204201430144_updatedToproductPicture.designer.cs">
-      <DependentUpon>202204201430144_updatedToproductPicture.cs</DependentUpon>
+    <Compile Include="Migrations\202204251044295_RemovedFK.cs" />
+    <Compile Include="Migrations\202204251044295_RemovedFK.designer.cs">
+      <DependentUpon>202204251044295_RemovedFK.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="MyContext.cs" />
@@ -97,8 +97,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202204201430144_updatedToproductPicture.resx">
-      <DependentUpon>202204201430144_updatedToproductPicture.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202204251044295_RemovedFK.resx">
+      <DependentUpon>202204251044295_RemovedFK.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

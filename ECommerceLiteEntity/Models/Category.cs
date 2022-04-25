@@ -23,9 +23,9 @@ namespace ECommerceLiteEntity.Models
         public int? BaseCategoryId { get; set; } //int normalde asla null değer alamaz.int'in yanında ? yazarsak Nullable bir int oluşturmuş oluruz.
         //public Nullable<int> BaseCategoryId eskiden böyle yazılabilirdi.Şimdi soru işareti yazarak aynı işlemi yapmış oluyoruz
 
-        [ForeignKey("BaseCategoryId")]
-        public virtual Category BaseCategory { get; set; }
-        public virtual List<Category> CategoryList { get; set; }
+        //[ForeignKey("BaseCategoryId")]
+        //public virtual Category BaseCategory { get; set; }
+        //public virtual List<Category> CategoryList { get; set; }
 
         //Her ürünün bir kategorisi olur cümlesinden yola çıkarak Productta tanımlanan ilişkiyi burada karşıyalım
         //Bire sonsuz ilişki nedeniyle yani bir kategorinin bir den çok ürünü olabilir mantığını karşılamak amacıyla buradaki

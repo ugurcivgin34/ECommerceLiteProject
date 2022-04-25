@@ -177,7 +177,7 @@ namespace ECommerceLiteBLL.Settings
             }
             catch (Exception ex)
             {
-
+                throw;
                 // ex loglanacak
             }
         }
