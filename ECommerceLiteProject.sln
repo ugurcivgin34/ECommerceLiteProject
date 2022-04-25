@@ -16,6 +16,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		NoteAboutProject.txt = NoteAboutProject.txt
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ECommerceLiteUtilities", "ECommerceLiteUtilities\ECommerceLiteUtilities.csproj", "{E18FB891-E1AF-4A22-BF5F-60F2E0B5CB92}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -38,6 +40,10 @@ Global
 		{ADFB20A9-827D-4B48-908E-7C8AE0F54928}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ADFB20A9-827D-4B48-908E-7C8AE0F54928}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ADFB20A9-827D-4B48-908E-7C8AE0F54928}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E18FB891-E1AF-4A22-BF5F-60F2E0B5CB92}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E18FB891-E1AF-4A22-BF5F-60F2E0B5CB92}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E18FB891-E1AF-4A22-BF5F-60F2E0B5CB92}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E18FB891-E1AF-4A22-BF5F-60F2E0B5CB92}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
